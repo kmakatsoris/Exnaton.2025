@@ -1,0 +1,43 @@
+DROP TABLE IF EXISTS tags;
+DROP TABLE IF EXISTS measurements;
+
+CREATE TABLE tags (
+    Id CHAR(36) PRIMARY KEY,
+    muid CHAR(36) NOT NULL,
+    quality VARCHAR(255),
+    INDEX (muid)
+);
+
+INSERT INTO tags (Id, Muid, Quality) VALUES ('6e1f0c67-b5ff-4b43-9fa1-8c04c42e84c6', '1db7649e-9342-4e04-97c7-f0ebb88ed1f8', 'measured');
+INSERT INTO tags (Id, Muid, Quality) VALUES ('ce6fabd7-3e19-4a2b-b02a-3a4ab5898019', '95ce3367-cbce-4a4d-bbe3-da082831d7bd', 'measured');
+
+CREATE TABLE measurements (
+    Id CHAR(36) NOT NULL,    
+    measurement VARCHAR(255) NOT NULL,
+    rectimestamp DATETIME NOT NULL,  
+    tagsMUId CHAR(36) NOT NULL,  -- No foreign key to have faster actions but need to check in the code if the tagmui exists
+    Indications JSON,            
+    PRIMARY KEY (Id, rectimestamp),  -- ✅ Primary Key includes partition key
+    INDEX idx_measurement_tags_time (measurement, tagsMUId, rectimestamp), 
+    INDEX idx_time (rectimestamp),    
+    UNIQUE INDEX idx_measurement_timestamp_muid (measurement, rectimestamp, tagsMUId)  -- Ensure combination is unique
+) 
+PARTITION BY RANGE (YEAR(rectimestamp) * 100 + MONTH(rectimestamp)) (
+    PARTITION p202201 VALUES LESS THAN (202202),
+    PARTITION p202202 VALUES LESS THAN (202203),
+    PARTITION p202203 VALUES LESS THAN (202204),
+    PARTITION p202204 VALUES LESS THAN (202205),
+    PARTITION p202205 VALUES LESS THAN (202206),
+    PARTITION p202206 VALUES LESS THAN (202207),
+    PARTITION p202207 VALUES LESS THAN (202208),
+    PARTITION p202208 VALUES LESS THAN (202209),
+    PARTITION p202209 VALUES LESS THAN (202210),
+    PARTITION p202210 VALUES LESS THAN (202211),
+    PARTITION p202211 VALUES LESS THAN (202212),
+    PARTITION p202212 VALUES LESS THAN (202301),
+    PARTITION p202301 VALUES LESS THAN (202302),
+    PARTITION p202302 VALUES LESS THAN (202303),
+    PARTITION p_max VALUES LESS THAN MAXVALUE  -- Catch-all partition
+);
+
+-- docker exec -i exnaton_mysql mysqldump -u root -proot ExnatonDB > ./mysql-init/init.sql

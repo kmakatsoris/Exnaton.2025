@@ -1,0 +1,63 @@
+# Ignore build and binary files
+**/bin/
+**/obj/
+
+# Ignore Rider, Visual Studio, and VS Code settings
+**/.idea/
+**/.vscode/
+**/*.suo
+**/*.user
+**/*.userosscache
+**/*.sln.docstates
+
+# Ignore NuGet packages
+**/packages/
+**/*.nupkg
+
+# Ignore project dependencies
+**/project.lock.json
+**/.DS_Store
+**/Thumbs.db
+
+# Ignore database and config files
+# **/appsettings.json
+# **/appsettings.Development.json
+
+# Ignore logs and temp files
+**/logs/
+**/*.log
+!TDD.log
+
+# Ignore MySQL data dumps
+**/*.sql
+
+# Ignore EF migrations and generated files
+**/Migrations/
+**/*.bak
+
+# Ignore compiled runtime files
+**/*.dll
+**/*.exe
+**/*.pdb
+**/*.cache
+
+# Ignore coverage and test result files
+**/coverage/
+**/TestResults/
+
+# Ignore Docker and Kubernetes files
+# **/.dockerignore
+**/*.iml
+
+# Ignore secrets and environment variables
+**/.env
+**/secrets.json
+
+# Ignore Taskfile setup files
+.gitApp/
+Taskfile.git.yaml
+README.Taskfile.gitSBS.md
+
+# Force to not ignore
+!Docker/
+!Docker/**/*
