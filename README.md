@@ -1,5 +1,6 @@
 Exnaton 2025 - README
 
+![ai-logo-readmefile](https://github.com/user-attachments/assets/94a71ae4-ef82-4e31-87c7-d7380a127ea5)
 ![logo](https://github.com/user-attachments/assets/698b375b-db74-45fb-819e-5631cad89ed4)
 
 # Overview
@@ -77,6 +78,9 @@ Here is a visual representation of how the Web API is structured:
 
 # Points/Regions of interest (POI or ROI)
 - The database and the code is implemented and configured with that way to allow high speed on reading/updating and writing data to the database because it is essential from the nature of the frequent data we have to habdle!
+- Bottleneck or points that are crucial and we should care about our implementation and system design is the database. We have not consider any back up mechanism (out of the scope of that assignment) but we have created with pagination the database to be
+  easily migrated, scaling and indexing to find our data. The data are also time series so we need to have a series of them so the pagination should be based on that criteria and we have page the database based on month (week or year possible)
+- 
   
 # Other Information
 Author: Kostas Makatsoris
