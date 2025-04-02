@@ -1,5 +1,7 @@
 Exnaton 2025 - README
 
+![logo](https://github.com/user-attachments/assets/698b375b-db74-45fb-819e-5631cad89ed4)
+
 # Overview
 Welcome to the Exnaton 2025! This project provides a monitoring system tracking data from mu and utilizating a webapi offer options for storing data, data analysis and other.
 
