@@ -52,7 +52,34 @@ Launch the system with the method 3.2. because it is one command execution: "doc
 Once the containers are running, you should be able to interact with the Web API at:
 
 - Localhost (Development) via Swagger: http://localhost:5142/swagger/index.html
-- Monitoring Tool (Seq): http://localhost:8081/ 
+- Monitoring Tool (Seq): http://localhost:8081/
+
+## Http calls further information
+- POST http://localhost:5184/Analysis/measurements
+{
+"muid": "1db7649e-9342-4e04-97c7-f0ebb88ed1f8",
+"measurement": "energy",
+"limit": 100,
+"start": "2022-12-01T23:45:00.000Z",
+"stop": "2023-03-01T23:45:00.000Z"
+}
+
+Creates a PDF with the analysis of the data coming from database based on the POST body
+
+- POST http://localhost:5184/meterdata/read
+{
+"muid": "95ce3367-cbce-4a4d-bbe3-da082831d7bd",
+"measurement": "energy",
+"limit": 100,
+"start": "2023-02-10T23:45:00.000Z",
+"stop": "2023-02-28T23:45:00.000Z"
+}
+
+Fetch the data asked from UI
+
+- GET http://localhost:5184/meterdata/measurement?muid=95ce3367-cbce-4a4d-bbe3-da082831d7bd&measurement=energy&limit=100&start=2023-02-10T23%3A45%3A00.000Z&stop=2023-02-28T23%3A45%3A00.000Z'
+
+Retrieving the data from the mu and store them in the database. As extra there is the option to display some of them as response.
 
 # Points of Interest
 ## Web API Structure
