@@ -38,3 +38,13 @@ app.UseRouting();
 app.UseHttpsRedirection();
 app.MapControllers();
 app.Run();
+
+/*
+ * Dependencies:
+ * sudo apt install libharfbuzz-dev
+ * find ~/.nuget/packages/ -name "libHarfBuzzSharp.so"
+ * sudo apt install -y libharfbuzz-dev libfreetype6 libfontconfig1
+ * mkdir -p /home/maccos/Workspace/Interviews/Exnaton.2025/Exnaton/bin/Debug/net8.0/linux-x64/
+ * cp ~/.nuget/packages/harfbuzzsharp.nativeassets.linux/7.3.0.3/runtimes/linux-x64/native/libHarfBuzzSharp.so    /home/maccos/Workspace/Interviews/Exnaton.2025/Exnaton/bin/Debug/net8.0/linux-x64/
+ * export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/maccos/.nuget/packages/harfbuzzsharp.nativeassets.linux/7.3.0.3/runtimes/linux-x64/native/
+*/

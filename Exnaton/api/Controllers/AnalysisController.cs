@@ -19,6 +19,10 @@ public class AnalysisController: ControllerBase
     }
 
     [HttpPost("measurements")]
-    public async Task AnalysisMeasurements([FromBody] ReadMeasurementsRequest request) =>
+    public async Task<IActionResult> AnalysisMeasurements([FromBody] ReadMeasurementsRequest request)
+    {
         await _analysisService?.AnalysisMeasurements(request);
+        var pdfFullname = Path.Combine(Directory.GetCurrentDirectory(), $"exploitation_results_{request?.Muid}_{request?.Limit}.pdf");
+        return Ok($"PDF evaluation is available at: {pdfFullname}");
+    }
 }
