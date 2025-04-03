@@ -19,6 +19,8 @@ public static class ServiceExtensions
             throw new ArgumentNullException($"The application is not configured properly.");
         // Singleton,
         services.AddSingleton(Log.Logger);
+        Log.Logger.Information("Logger is successfully configured.");
+        Log.Logger.Error("Logger is successfully configured.");
         
         // Scoped,
         services.AddScoped<IMeasurementsRepository, MeasurementsRepository>();

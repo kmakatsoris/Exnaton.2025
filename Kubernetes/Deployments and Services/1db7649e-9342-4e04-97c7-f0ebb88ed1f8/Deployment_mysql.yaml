@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: exnaton-mysql
+  namespace: 1db7649e-9342-4e04-97c7-f0ebb88ed1f8
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: exnaton-mysql
+  template:
+    metadata:
+      labels:
+        app: exnaton-mysql
+    spec:
+      containers:
+        - name: exnaton-mysql
+          image: exnaton-mysql:lts
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: exnaton-secret
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: exnaton-config
+                  key: MYSQL_DATABASE
+            - name: MYSQL_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: exnaton-config
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: exnaton-secret
+                  key: MYSQL_PASSWORD       
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: exnaton-mysql-service
+  namespace: 1db7649e-9342-4e04-97c7-f0ebb88ed1f8
+spec:
+  selector:
+    app: exnaton-mysql
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306  

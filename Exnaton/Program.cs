@@ -28,10 +28,14 @@ app.MapGet("/environment", () =>
 
 app.UseSerilogRequestLogging();
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || appSettings?.InternalEnvironment?.Contains("Development") == true)
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Exnaton API Endpoints Available");
+        c.RoutePrefix = string.Empty; // http://localhost:<Port-web-api ex: 5142 or 8080>/index.html
+    });
 }
 
 app.UseRouting();

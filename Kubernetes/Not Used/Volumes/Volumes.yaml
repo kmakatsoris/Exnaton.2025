@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: exnaton-mysql-init-pv
+  namespace: 1db7649e-9342-4e04-97c7-f0ebb88ed1f8
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/home/maccos/Workspace/Interviews/Exnaton.2025/Kubernetes/Volumes/mysql-init"    
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: exnaton-mysql-init-volume-class
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: exnaton-mysql-init-pvc
+  namespace: 1db7649e-9342-4e04-97c7-f0ebb88ed1f8
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: exnaton-mysql-init-volume-class

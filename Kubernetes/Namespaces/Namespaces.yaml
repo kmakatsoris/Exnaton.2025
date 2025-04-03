@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: 1db7649e-9342-4e04-97c7-f0ebb88ed1f8
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: 95ce3367-cbce-4a4d-bbe3-da082831d7bd
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: shared-services

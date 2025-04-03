@@ -19,6 +19,7 @@ public static class PDFUtils
     {
         try
         {
+            logger.Error("@TEST: Exporting measurement data to PDF");
             QuestPDF.Settings.License = LicenseType.Community;
             
             if (measurements == null || measurements.Count == 0 || measurements.Any(m => m == null))

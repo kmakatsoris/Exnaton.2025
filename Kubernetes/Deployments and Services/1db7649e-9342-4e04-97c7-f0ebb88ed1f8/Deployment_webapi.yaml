@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapi
+  namespace: shared-services
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: webapi
+  template:
+    metadata:
+      labels:
+        app: webapi
+    spec:
+      containers:
+        - name: webapi
+          image: mywebapi:latest
+          ports:
+            - containerPort: 5142
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: webapi-config
+                  key: DATABASE_HOST
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapi-service
+  namespace: shared-services
+spec:
+  selector:
+    app: webapi
+  ports:
+    - protocol: TCP
+      port: 5142
+      targetPort: 5142
+  type: ClusterIP

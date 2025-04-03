@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:  
+  webapi:
+    image: mcr.microsoft.com/dotnet/aspnet:8.0
+    container_name: exnaton_webapi
+    restart: always
+    env_file:
+      - .env
+    environment:      
+      ASPNETCORE_ENVIRONMENT: "${ASPNETCORE_ENVIRONMENT}"
+      MYSQL_HOST: "mysql"
+      MYSQL_PORT: "${MYSQL_PORT}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      SEQ_URL: "http://exnaton_seq:5341"
+    build:
+      context: ../Exnaton/
+      dockerfile: Dockerfile
+    ports:
+      - "${ASPNETCORE_PORT}:5142"      
+    depends_on:
+      - exnaton_mysql
+      - exnaton_seq
+    networks:
+      - exnaton_network
+    volumes:
+      - ../Exnaton/appsettings.json:/app/appsettings.json      
+      - ../Exnaton/appsettings.Docker-Development.json:/app/appsettings.Docker-Development.json
+
+networks:
+  exnaton_network:
+    external: false
+

@@ -37,6 +37,7 @@ public class DataService: IDataService
     /// <exception cref="ExternalServiceNotAvailableException">Thrown when the response is invalid or when face HttpRequestException or JsonException or other unhandled exception.</exception>
     public async Task<List<MeasurementDataDTO>> FetchAndStoreDataAsync(ReadMeasurementsRequest request, bool enReturnResponse = false)
     {
+        _logger.Error("@TEST: Welcome to FetchAndStoreDataAsync");
         if (request?.Validate() != true)
             throw BusinessExceptions.InvalidMeasurementException(_logger, $"Invalid request.", logMsg: $"ReadMeasurementsRequest: {JsonSerializer.Serialize(request)}");
         MeasurementDataWrapperDTO? res = await _httpClientService?.FetchDataAsync(request.Muid);
@@ -72,6 +73,7 @@ public class DataService: IDataService
     /// <exception cref="BusinessException">Thrown when the request contains invalid parameters.</exception>
     public async Task<List<MeasurementDataDTO>?> ReadDataAsync(ReadMeasurementsRequest request)
     {
+        _logger.Error("@TEST: Welcome to ReadDataAsync");
         if (request?.Validate() != true)
             throw BusinessExceptions.InvalidMeasurementException(_logger, $"Invalid request.", logMsg: $"ReadMeasurementsRequest: {JsonSerializer.Serialize(request)}");
         List<MeasurementDataDTO>? data = _measurementsRepository?.Read(request);
