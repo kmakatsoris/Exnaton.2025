@@ -3,6 +3,7 @@ using QuestPDF.Infrastructure;
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Text.Json;
 using Exnaton.Exceptions;
 using Exnaton.Models;
 using Exnaton.Utils;
@@ -19,37 +20,46 @@ public static class PDFUtils
     {
         try
         {
-            logger.Error("@TEST: Exporting measurement data to PDF");
+            logger.Error("@TEST: 1.");
             QuestPDF.Settings.License = LicenseType.Community;
             
             if (measurements == null || measurements.Count == 0 || measurements.Any(m => m == null))
                 throw BusinessExceptions.InvalidMeasurementException(logger, "Measurements are required and cannot be null.");
             
-            // Generate graph            
+            // Generate graph     
+            logger.Error("@TEST: 2.");
             var plotModel = GraphUtils.CreateTimeSeriesGraph(measurements, logger);
             if (plotModel == null)
                 throw BusinessExceptions.ServiceNotAvailableException(logger);
 
+            logger.Error("@TEST: 3.");
             var imageFilePath = Path.Combine(Directory.GetCurrentDirectory(), "chart.png");
 
             // Export the graph as PNG using SkiaSharp (cross-platform)
             var exporter = new PngExporter { Width = 600, Height = 400 };
-
+            logger.Error("@TEST: 4.");
             using (var stream = File.Create(imageFilePath))
             {
+                logger.Error("@TEST: 5.");
                 exporter.Export(plotModel, stream);
+                logger.Error("@TEST: 6.");
             }
 
             // Create the PDF document
+            logger.Error("@TEST: 7.");
             Document.Create(container =>
             {
+                logger.Error("@TEST: 8.");
                 container.Page(page =>
                 {
+                    logger.Error("@TEST: 9.");
                     page.Margin(50);
                     var logoFullname = Path.Combine(Directory.GetCurrentDirectory(), "logo.png");
                     page.Background().Image(logoFullname).FitWidth();
+                    logger.Error("@TEST: 10.");
                     page.Content().Column(column =>
                     {
+                        logger.Error("@TEST: 11.");
                         column.Item().Text("Welcome to the Exnaton Monitoring Results Record.").Bold().FontSize(16);
                         column.Item().Text("Below is the graph showing the tracking samples recorded by the Exnaton machine/measurement units, along with some analysis details.");
 
@@ -74,15 +84,20 @@ public static class PDFUtils
                         column.Item().PaddingTop(15).Text($"Created on: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
                         column.Item().Text("Author: Kostas Makatsoris via Exnaton.").FontColor(QuestPDF.Infrastructure.Color.FromRGB(255, 0, 0));
                         column.Item().Text("Enjoy your Data Exploration Report! :)").FontColor(QuestPDF.Infrastructure.Color.FromRGB(255, 0, 0));
+                        logger.Error("@TEST: 12.");
                     });
+                    logger.Error("@TEST: 13.");
                 });
+                logger.Error("@TEST: 14.");
             }).GeneratePdf($"exploitation_results_{measurements?.FirstOrDefault()?.Tags?.Muid}_{measurements?.Count}.pdf");
-
+            logger.Error("@TEST: 15.");
             // Clean up image after PDF creation
             File.Delete(imageFilePath);
+            logger.Error("@TEST: 16.");
         }
         catch (Exception ex)
         {
+            logger.Error($"@TEST: 0. ex?.Message={JsonSerializer.Serialize(ex?.Message)} and \n\n ex?.InnerException?.Message={JsonSerializer.Serialize(ex?.InnerException?.Message)}");
             throw BusinessExceptions.ServiceNotAvailableException(logger, logMsg: ex?.Message);
         }
     }

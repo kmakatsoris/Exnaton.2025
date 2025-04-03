@@ -4,6 +4,7 @@ WORKDIR /app
 # Install necessary libraries via apt
 RUN apt-get update && apt-get install -y \
     libharfbuzz-dev \
+    libharfbuzz0b \
     libfreetype6 \
     libfontconfig1 \
     && rm -rf /var/lib/apt/lists/*
@@ -21,6 +22,7 @@ RUN dotnet restore ./Exnaton/Exnaton.csproj
 # Copy the rest of the source code and build the application
 COPY ./ ./Exnaton/
 WORKDIR /src/Exnaton
+COPY ./logo.png /app/
 RUN dotnet publish -c Release -o /app/publish
 
 FROM base AS final

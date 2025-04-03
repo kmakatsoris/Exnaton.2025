@@ -6,6 +6,20 @@ sudo systemctl start docker
 minikube stop
 minikube delete
 minikube start --driver=docker -p exnaton-cluster
+minikube -p exnaton-cluster ssh
+(Inside the exnaton-cluser ssh: sudo apt-get update
+sudo apt-get install -y \
+    libharfbuzz-dev \
+    libfreetype6 \
+    libfontconfig1 \
+    libpng-dev \
+    libgl1-mesa-glx \
+    libx11-dev \
+    libxrender-dev \
+    libicu-dev
+)
+minikube -p exnaton-cluster stop
+minikube -p exnaton-cluster start
 eval $(minikube -p exnaton-cluster docker-env)
 docker info | grep "Name"
 docker build -t exnaton-mysql:lts ../Docker/MySQL/
