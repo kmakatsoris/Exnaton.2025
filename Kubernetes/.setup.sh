@@ -9,7 +9,9 @@ minikube start --driver=docker -p exnaton-cluster
 eval $(minikube -p exnaton-cluster docker-env)
 docker info | grep "Name"
 docker build -t exnaton-mysql:lts ../Docker/MySQL/
-docker run -it --entrypoint bash exnaton-mysql:lts
+docker build -t exnaton-webapi:lts ../Exnaton/
+# docker run -it --entrypoint bash exnaton-mysql:lts
+# eval $(minikube docker-env --unset)
 
 kubectl apply -f Namespaces.yaml && set -e && namespaces=true || namespaces=false
 kubectl apply -f ConfigMaps.yaml && set -e && configmaps=true || configmaps=false

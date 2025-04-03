@@ -4,11 +4,12 @@ metadata:
   name: exnaton-config
   namespace: 1db7649e-9342-4e04-97c7-f0ebb88ed1f8
 data:
-  MYSQL_HOST: "mysql"
+  MYSQL_HOST: "exnaton-mysql-service"
   MYSQL_PORT: "3306" 
   MYSQL_USER: "exnaton_user"
   MYSQL_DATABASE: "ExnatonDB"
   SEQ_URL: "http://exnaton_seq:5341"
+  ASPNETCORE_ENVIRONMENT: "Development"
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -16,11 +17,12 @@ metadata:
   name: exnaton-config
   namespace: 95ce3367-cbce-4a4d-bbe3-da082831d7bd
 data:
-  MYSQL_HOST: "mysql"
+  MYSQL_HOST: "exnaton-mysql-service"
   MYSQL_PORT: "3306" 
   MYSQL_USER: "exnaton_user"
   MYSQL_DATABASE: "ExnatonDB"
   SEQ_URL: "http://exnaton_seq:5341"
+  ASPNETCORE_ENVIRONMENT: "Development"
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -28,9 +30,10 @@ metadata:
   name: exnaton-config
   namespace: shared-services
 data:
-  MYSQL_HOST: "mysql"
+  MYSQL_HOST: "exnaton-mysql-service"
   MYSQL_PORT: "3306" 
   MYSQL_USER: "exnaton_user"
   MYSQL_DATABASE: "ExnatonDB"
   SEQ_URL: "http://exnaton_seq:5341"
+  ASPNETCORE_ENVIRONMENT: "Development"
 

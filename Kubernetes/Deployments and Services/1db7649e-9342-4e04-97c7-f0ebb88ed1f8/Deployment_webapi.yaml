@@ -1,50 +1,71 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: webapi
-  namespace: shared-services
+  name: exnaton-webapi
+  namespace: 1db7649e-9342-4e04-97c7-f0ebb88ed1f8
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: webapi
+      app: exnaton-webapi
   template:
     metadata:
       labels:
-        app: webapi
+        app: exnaton-webapi
     spec:
       containers:
-        - name: webapi
-          image: mywebapi:latest
-          ports:
-            - containerPort: 5142
+        - name: exnaton-webapi
+          image: exnaton-webapi:lts
           env:
-            - name: DB_HOST
+            - name: ASPNETCORE_ENVIRONMENT
               valueFrom:
                 configMapKeyRef:
-                  name: webapi-config
-                  key: DATABASE_HOST
-            - name: DB_USER
+                  name: exnaton-config
+                  key: ASPNETCORE_ENVIRONMENT
+            - name: MYSQL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: exnaton-config
+                  key: MYSQL_HOST
+            - name: MYSQL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: exnaton-config
+                  key: MYSQL_PORT
+            - name: MYSQL_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: exnaton-config
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: db-secrets
-                  key: username
-            - name: DB_PASSWORD
+                  name: exnaton-secret
+                  key: MYSQL_PASSWORD
+            - name: MYSQL_DATABASE
               valueFrom:
-                secretKeyRef:
-                  name: db-secrets
-                  key: password
+                configMapKeyRef:
+                  name: exnaton-config
+                  key: MYSQL_DATABASE
+            - name: SEQ_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: exnaton-config
+                  key: SEQ_URL
+          ports:
+            - containerPort: 5142
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: webapi-service
-  namespace: shared-services
+  name: exnaton-webapi-service
+  namespace: 1db7649e-9342-4e04-97c7-f0ebb88ed1f8
 spec:
   selector:
-    app: webapi
+    app: exnaton-webapi
   ports:
-    - protocol: TCP
+    - name: web
+      protocol: TCP
       port: 5142
       targetPort: 5142
-  type: ClusterIP
+  type: NodePort

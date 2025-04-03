@@ -21,9 +21,16 @@ var appSettings = serviceProvider.GetRequiredService<IOptions<AppSettings>>().Va
 
 app.MapGet("/environment", () =>
 {
-    var environment = builder.Environment.EnvironmentName;
+    // var environment = builder.Environment.EnvironmentName;
+    string environment = appSettings.ConnectionStrings.DbConnection;
     var version = appSettings.Version;
-    return Results.Ok(new { Environment = environment, AppSettingsEnvironment = appSettings?.InternalEnvironment, Version = version, DefaultConnection = appSettings?.ConnectionStrings?.DbConnection ?? "DbConnection not found." });
+    return Results.Ok(new
+    {
+        Environment = $"{environment}", 
+        AppSettingsEnvironment = appSettings?.InternalEnvironment, 
+        Version = version, 
+        DefaultConnection = appSettings?.ConnectionStrings?.DbConnection ?? "DbConnection not found."
+    });
 });
 
 app.UseSerilogRequestLogging();

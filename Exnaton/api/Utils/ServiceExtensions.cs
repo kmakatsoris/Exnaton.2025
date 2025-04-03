@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Exnaton.Implementations;
 using Exnaton.Implementations.HttpClients;
 using Exnaton.Implementations.Repositories;
@@ -7,6 +8,7 @@ using Exnaton.Interfaces.Repositories;
 using Exnaton.Models;
 using Exnaton.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Serilog;
 
 namespace Exnaton.Utils;
@@ -48,9 +50,13 @@ public static class ServiceExtensions
         // Singleton,
         
         // Scoped,
+        var appSettings = services.BuildServiceProvider().GetRequiredService<IOptions<AppSettings>>().Value;
+        string connectionString = appSettings?.ConnectionStrings?.DbConnection ?? throw new ArgumentNullException("Connection string not found.");
+        Log.Logger.Information($"connectionString={JsonSerializer.Serialize(connectionString)}.");
+        
         services.AddDbContext<AppDbContext>(options =>
-            options.UseMySql(configuration.GetConnectionString("DbConnection"), 
-                ServerVersion.AutoDetect(configuration.GetConnectionString("DbConnection"))), ServiceLifetime.Scoped);
+            options.UseMySql(connectionString, 
+                ServerVersion.AutoDetect(connectionString)), ServiceLifetime.Scoped);
         
         services.AddHealthChecks()
             .AddCheck<DatabaseHealthCheck>("AppDbContext");
@@ -73,7 +79,31 @@ public static class ServiceExtensions
             .AddEnvironmentVariables();
 
         builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
-        builder.Services.Configure<AppSettings>(builder.Configuration);
+
+        var config = builder.Configuration;
+        try
+        {
+            string host = "Server=" + (Environment.GetEnvironmentVariable("MYSQL_HOST") ??
+                                       throw new ArgumentNullException("MYSQL_HOST")) + ";";
+            string database = "Database=" + (Environment.GetEnvironmentVariable("MYSQL_DATABASE") ??
+                                             throw new ArgumentNullException("MYSQL_DATABASE")) + ";";
+            string user = "User=" + (Environment.GetEnvironmentVariable("MYSQL_USER") ??
+                                     throw new ArgumentNullException("MYSQL_USER")) + ";";
+            string password = "Password=" + (Environment.GetEnvironmentVariable("MYSQL_PASSWORD") ??
+                                             throw new ArgumentNullException("MYSQL_PASSWORD")) + ";";
+            if (string.IsNullOrEmpty(config.GetConnectionString("DbConnection")))
+                throw new ArgumentException("The connection string is missing.");
+            config["ConnectionStrings:DbConnection"] = host+database+user+password;
+        }
+        catch (Exception ex)
+        {
+            
+        }
+        
+        
+        builder.Services.Configure<AppSettings>(config);
+        
+        
 
         builder.ConfigureLogger();
 
