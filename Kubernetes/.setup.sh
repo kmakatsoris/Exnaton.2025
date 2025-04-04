@@ -1,25 +1,53 @@
 #!/bin/bash
 
-# Dependencies to do the followings
+# Function to install dependencies
+install_dependencies() {
+    echo "🚀 Installing Dependencies..."
+
+    # Install Docker
+    echo "🔹 Installing Docker..."
+    sudo apt update
+    sudo apt install -y docker.io
+    sudo systemctl enable docker
+    sudo systemctl start docker
+
+    # Install Docker Compose
+    echo "🔹 Installing Docker Compose..."
+    sudo apt install -y docker-compose
+
+    # Install Minikube
+    echo "🔹 Installing Minikube..."
+    curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+    sudo install minikube-linux-amd64 /usr/local/bin/minikube
+    rm minikube-linux-amd64
+
+    # Install Kubectl
+    echo "🔹 Installing Kubectl..."
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    chmod +x kubectl
+    sudo mv kubectl /usr/local/bin/
+
+    echo -e "\n🎉 All dependencies have been installed successfully!"
+}
+
+# Run the installation function
+install_dependencies
+
+# Pause for user confirmation before proceeding
+read -p "🔹 Press any key to start Minikube and apply Kubernetes resources... " -n1 -s
+echo -e "\n"
+
+# --------------------------------------------------------
+# [Main Flow]
+# --------------------------------------------------------
 
 sudo systemctl start docker
 minikube stop
 minikube delete
 minikube start --driver=docker -p exnaton-cluster
-minikube -p exnaton-cluster ssh
-(Inside the exnaton-cluser ssh: sudo apt-get update
-sudo apt-get install -y \
-    libharfbuzz-dev \
-    libfreetype6 \
-    libfontconfig1 \
-    libpng-dev \
-    libgl1-mesa-glx \
-    libx11-dev \
-    libxrender-dev \
-    libicu-dev
-)
-minikube -p exnaton-cluster stop
-minikube -p exnaton-cluster start
+# minikube -p exnaton-cluster ssh
+# minikube -p exnaton-cluster stop
+# minikube -p exnaton-cluster start
 eval $(minikube -p exnaton-cluster docker-env)
 docker info | grep "Name"
 docker build -t exnaton-mysql:lts ../Docker/MySQL/
@@ -27,15 +55,17 @@ docker build -t exnaton-webapi:lts ../Exnaton/
 # docker run -it --entrypoint bash exnaton-mysql:lts
 # eval $(minikube docker-env --unset)
 
-kubectl apply -f Namespaces.yaml && set -e && namespaces=true || namespaces=false
-kubectl apply -f ConfigMaps.yaml && set -e && configmaps=true || configmaps=false
-kubectl apply -f Secrets.yaml && set -e && secrets=true || secrets=false
-kubectl apply -f Deployment_SharedServices.yaml && set -e && Deployment_SharedServices=true || Deployment_SharedServices=false
-kubectl apply -f HorizontalPodAutoscalers.yaml && set -e && HorizontalPodAutoscalers=true || HorizontalPodAutoscalers=false
+kubectl apply -f "./Namespaces/Namespaces.yaml" && set -e && namespaces=true || namespaces=false
+kubectl apply -f "./Configs/ConfigMaps.yaml" && set -e && configmaps=true || configmaps=false
+kubectl apply -f "./Configs/Secrets.yaml" && set -e && secrets=true || secrets=false
+kubectl apply -f "./Deployments and Services/1db7649e-9342-4e04-97c7-f0ebb88ed1f8/Deployment_mysql.yaml" && set -e && mysqlDeployment=true || mysqlDeployment=false
+kubectl apply -f "./Deployments and Services/1db7649e-9342-4e04-97c7-f0ebb88ed1f8/Deployment_seq.yaml" && set -e && seqDeployment=true || seqDeployment=false
+kubectl apply -f "./Deployments and Services/1db7649e-9342-4e04-97c7-f0ebb88ed1f8/Deployment_webapi.yaml" && set -e && webapiDeployment=true || webapiDeployment=false
 # kubectl get hpa -n shared-services
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
-kubectl apply -f IngressServices.yaml && set -e && Ingress=true || Ingress=false
+# kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+# kubectl apply -f IngressServices.yaml && set -e && Ingress=true || Ingress=false
 
+clear
 if [ "$namespaces" = true ]; then
   echo "Applying the namespaces. ✅"
 else
@@ -54,20 +84,22 @@ else
   echo "Failed to apply secrets. 😤"
 fi
 
-if [ "$Deployment_SharedServices" = true ]; then
-  echo "Applying the deployment for shared services. ✅"
+if [ "$mysqlDeployment" = true ]; then
+  echo "Applying the mysql Deployment. ✅"
 else
-  echo "Failed to apply deployment for shared services. 😤"
+  echo "Failed to apply mysql Deployment. 😤"
 fi
 
-if [ "$HorizontalPodAutoscalers" = true ]; then
-  echo "Applying the Horizontal Pod Autoscalers. ✅"
+if [ "$seqDeployment" = true ]; then
+  echo "Applying the seq Deployment. ✅"
 else
-  echo "Failed to apply Horizontal Pod Autoscalers. 😤"
+  echo "Failed to apply seq Deployment. 😤"
 fi
 
-if [ "$Ingress" = true ]; then
-  echo "Applying the Ingress Services. ✅"
+if [ "$webapiDeployment" = true ]; then
+  echo "Applying the webapi Deployment. ✅"
 else
-  echo "Failed to apply Ingress Services. 😤"
+  echo "Failed to apply webapi Deployment. 😤"
 fi
+
+echo "🎉 Enjoy!"
