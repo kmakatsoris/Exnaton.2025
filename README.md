@@ -21,38 +21,56 @@ To get started with this project, ensure that your environment meets the prerequ
 ## Prerequisites
 Before running the project, ensure you have the following tools installed:
 
+[Recommended]
+I have created two files for installing all the dependencies and running the system for both Windows and Unix systems.
+You can find it inside the directory: 
+- Unix: "Exnaton.2025/Kubernetes/.setup.sh"
+- Windows: "Exnaton.2025/Kubernetes/.setup.bat"
+Otherwise...
+
 1. Docker: For containerizing the application.
    1.1. Docker Installation,
    - If you select to install it to **Debian/Ubutnu OS** refer to the following source: https://docs.docker.com/engine/install/ubuntu/
    - If you select to install it to **Windows OS** refer to the following source: https://docs.docker.com/desktop/setup/install/windows-install/
    1.2. Docker Compose Installation,
    - **Widnows/MacOS/Linux**: https://medium.com/@piyushkashyap045/comprehensive-guide-installing-docker-and-docker-compose-on-windows-linux-and-macos-a022cf82ac0b
+   1.3. Kubernetes installation:
+   - Unix: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
+   - Windows: https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/
+   1.4. Minikube installation:
+   - Unix: https://minikube.sigs.k8s.io/docs/start/?arch=%2Flinux%2Fx86-64%2Fstable%2Fbinary+download
+   - Windows: https://minikube.sigs.k8s.io/docs/start/?arch=%2Flinux%2Fx86-64%2Fstable%2Fbinary+download
 
 2. [Optional]: .NET SDK 8: To build and run the .NET-based application.
    Is Required only if you select the option of running the application in Local/Debug/Development stage.
    - From **Linux/MacOS/Windows** refer to the following source: https://dotnet.microsoft.com/en-us/download/dotnet/8.0
+  
+![Screenshot from 2025-04-04 02-47-12](https://github.com/user-attachments/assets/fe0fd042-fefe-4b1c-8d5b-b35595421bd4)
+
 
 ## Installation & Run Steps
+[Recommended]
+I have created two files for installing all the dependencies and running the system for both Windows and Unix systems.
+You can find it inside the directory: 
+- Unix: "Exnaton.2025/Kubernetes/.setup.sh"
+- Windows: "Exnaton.2025/Kubernetes/.setup.bat"
+Otherwise...
+
 - 1. Clone the Repository: Start by downloading the repository to your local machine. (Or The project would be attached to a mail, take the latest version of it based on the date candidate(kostas makatsoris) has sent to)
 - 2. Navigate to project's directory and lets refer to that as directoryA
-- 3. There you could find a folder with name Docker; Open that on another tab for your convenience; Inside that directory lets refer to that as directoryB, execute the following commands.
-   - 3.1.a Update the webapi appsetting.json -> environment as "Development" and then "docker-compose -f docker-compose.dev.yml up --build -d", to launch the docker infrastracture as development mode; That means it will **start only the mysql database and the seq monitoring tool**
-   - 3.1.b Navigate to the directoryA and execute: "dotnet restore && dotnet build && dotnet run" (**Or if you are using an IDE just "Rebuild and Run the WebAPI"**).
-   - 3.2. Update the webapi appsetting.json -> environment as "Docker-Development" and then "docker-compose -f docker-compose-dev.yml -f docker-compose-prod.yml up --build -d", to launch the docker infrastracture as production mode; That means it will **start all the services: mysql db, seq, webapi**
+- 3. There you could find a folder with name Kubernetes; Open that on another tab for your convenience;
+  3.1. Then having the minikube cluster running and verify that the kubectl has the right context
+  3.2. Apply all the yamls inside that Kubernetes directory. Exclude the ones inside "Future" and "Not Used".
 
 ![Screenshot from 2025-03-23 19-51-10](https://github.com/user-attachments/assets/0e36b529-3173-43eb-9011-86e1a4b7a275)
 ![Screenshot from 2025-03-23 19-51-20](https://github.com/user-attachments/assets/5f8738c4-68f7-4336-a686-489b9ec3dbb8)
 
 
-
-### Suggestion:
-Launch the system with the method 3.2. because it is one command execution: "docker-compose -f docker-compose-dev.yml -f docker-compose-prod.yml up --build -d". But to see the test suits launch with 3.1 latter. Incl: unit (it is more like unit and integration testing) & integration (it is more like system testing) testing.
-
 ## Accessing the Application
 Once the containers are running, you should be able to interact with the Web API at:
 
-- Localhost (Development) via Swagger: http://localhost:5142/swagger/index.html
-- Monitoring Tool (Seq): http://localhost:8081/
+- Localhost (Development) via Swagger: http://192.168.49.2:32566/index.html
+- Monitoring Tool (Seq): http://192.168.49.2:31409
 
 ## Http calls further information
 - POST http://localhost:5184/Analysis/measurements
@@ -107,7 +125,15 @@ Here is a visual representation of how the Web API is structured:
 - The database and the code is implemented and configured with that way to allow high speed on reading/updating and writing data to the database because it is essential from the nature of the frequent data we have to habdle!
 - Bottleneck or points that are crucial and we should care about our implementation and system design is the database. We have not consider any back up mechanism (out of the scope of that assignment) but we have created with pagination the database to be
   easily migrated, scaling and indexing to find our data. The data are also time series so we need to have a series of them so the pagination should be based on that criteria and we have page the database based on month (week or year possible). To summarise the database migration and scaling and also the scaling of the service receiving the data from the MUs are the most vulnerable/fragile units.
-- 
+- The main problems that may face in the future are that we need to group some sources of mu data based on the muid (like loadbalancin but with tenants) and with Ingress service to split the flow to seperate web api services. Also with the same way to seperate the databases and with paging based on Month or other date intervals.
+- Other optimization is to perform database read and write strategies
+- Ofcourse indexes but better to have one (to both of the three main criteria of the request) to not having write delays
+- Autoscalling pods and database is also solution
+- And with all of them is also easy to migrate or backup the databases
+
+!More details and answers at the generated PDFs.
+![Screenshot from 2025-04-04 03-17-17](https://github.com/user-attachments/assets/5ff1feff-760d-467f-87a2-9a37f0911586)
+
   
 # Other Information
 Author: Kostas Makatsoris
@@ -118,7 +144,9 @@ Date: March 2025
 Here is an overview of the project’s file structure:
 
 ![Screenshot from 2025-04-02 14-31-00](https://github.com/user-attachments/assets/d34b95b9-cacf-47fb-9128-595b92cb0741)
-
+![Screenshot from 2025-04-04 02-20-42](https://github.com/user-attachments/assets/222105de-5ba8-4d85-9614-421f8ba87345)
+![Screenshot from 2025-04-04 02-20-57](https://github.com/user-attachments/assets/7efc06f4-8108-4e7c-98af-04f2cf06d657)
+![Screenshot from 2025-04-04 02-58-16](https://github.com/user-attachments/assets/98fb7f5a-29a7-42b8-b4dd-37e07abf38f8)
 
 
 
